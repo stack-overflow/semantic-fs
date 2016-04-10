@@ -39,20 +39,21 @@ func execSelectRow(db *sql.DB, selectSqlStmt string, args ...interface{}) *sql.R
     return stmt.QueryRow(args...)
 }
 
-func (db *Database) FindFile(filePath string) *DbFile {
+func (db *Database) FindFile(absPath string) *DbFile {
     var id int
+    var name string
     var path string
     var isDir bool
     err := execSelectRow(
         db.db,
         "SELECT * FROM file WHERE path = ?",
-        filePath).Scan(&id, &path, &isDir)
+        absPath).Scan(&id, &name, &path, &isDir)
 
     if err != nil {
         return nil
     }
     
-    return &DbFile { id, path, isDir }
+    return &DbFile { id, name, path, isDir }
 }
 
 func (db *Database) FindTag(tag string) *DbTag {
@@ -86,15 +87,15 @@ func execInsert(db *sql.DB, insertSqlStmt string, args ...interface{}) int64 {
     return id
 }
 
-func (db *Database) InsertFile(path string, isDir bool) *DbFile {
-    file := db.FindFile(path)
+func (db *Database) InsertFile(name string, absPath string, isDir bool) *DbFile {
+    file := db.FindFile(absPath)
     if file == nil {
         id := execInsert(
             db.db,
-            "INSERT INTO file (path, is_dir) VALUES (?, ?)",
-            path, isDir)
+            "INSERT INTO file (name, path, is_dir) VALUES (?, ?, ?)",
+            name, absPath, isDir)
 
-        return &DbFile{int(id), path, isDir}
+        return &DbFile{int(id), name, absPath, isDir}
     }
     return file
 }

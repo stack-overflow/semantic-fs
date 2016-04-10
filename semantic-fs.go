@@ -25,10 +25,8 @@ func (t *Tagger) TagFile(filePath string, tag string) {
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Println(absPath)
-    fmt.Println(filepath.Base(absPath))
     
-    dbFile := t.tagDB.FindFile(filePath)
+    dbFile := t.tagDB.FindFile(absPath)
     dbTag := t.tagDB.FindTag(tag)
     fmt.Printf("TagFile:\nfile: %v\ntag: %v\n", dbFile, dbTag)
     t.tagDB.TagFile(dbFile, dbTag)
@@ -42,7 +40,8 @@ func main() {
 	schema.ExecuteSchema(tagDB, schema.SchemaCreateTagTable())
 	schema.ExecuteSchema(tagDB, schema.SchemaCreateFileTagTable())
 
-    tagDB.InsertFile("semantic-fs-go.db", false)
+    absPath, _ := filepath.Abs("semantic-fs-go.db")
+    tagDB.InsertFile("semantic-fs-go.db", absPath, false)
     tagDB.InsertTag("test")
     CreateTagger(tagDB).TagFile("semantic-fs-go.db", "test")
 

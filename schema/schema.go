@@ -11,7 +11,11 @@ func SchemaCreateTagTable() string {
 }
 
 func SchemaCreateFileTable() string {
-    return "CREATE TABLE IF NOT EXISTS file (id INTEGER PRIMARY KEY, path TEXT, is_dir INTEGER);"
+    return `CREATE TABLE IF NOT EXISTS file (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        path TEXT,
+        is_dir INTEGER);`
 }
 
 func SchemaCreateFileTagTable() string {

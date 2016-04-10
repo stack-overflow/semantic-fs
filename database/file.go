@@ -2,6 +2,7 @@ package database
 
 type DbFile struct {
     id int
+    name string
     path string
     isDir bool
 }
